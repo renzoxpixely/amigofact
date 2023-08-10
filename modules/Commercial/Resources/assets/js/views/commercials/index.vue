@@ -3,7 +3,7 @@
         <div class="page-header pr-0">
             <h2><a href="/dashboard"><i class="fas fa-tachometer-alt"></i></a></h2>
             <ol class="breadcrumbs">
-                <li class="active"><span>Logística</span></li>
+                <li class="active"><span>Comercial</span></li>
             </ol>
             <div class="right-wrapper pull-right" v-if="typeUser != 'client'">
                 <a :href="`/logistic/create`" class="btn btn-custom btn-sm  mt-2 mr-2"><i class="fa fa-plus-circle"></i> Nuevo</a>
@@ -77,7 +77,7 @@
                                     @click.prevent="clickGenerateInvoice(row.id)" >Generar comprobante</button>
 
                             <a v-if="row.state_type_id != '11'" :href="`/${resource}/view/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-success">Visualizar</a>
-                            <a v-if="row.state_type_id != '11' && typeUser != 'client'" :href="`/${resource}/participacion/create/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-info">Editar</a>
+                            <a v-if="row.state_type_id != '11' && typeUser != 'client'" :href="`/${resource}/${row.participation_type.toLowerCase()}/create/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-info">Editar</a>
                             <!--<button v-if="row.state_type_id != '11' && typeUser != 'client'" type="button" class="btn waves-effect waves-light btn-xs btn-danger" @click.prevent="clickVoided(row.id)">Anular</button>-->
 
                             <button type="button" class="btn waves-effect waves-light btn-xs btn-info"

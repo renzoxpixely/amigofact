@@ -31,6 +31,7 @@
                         <th>Cliente</th>
                         <th>Sala</th>
                         <th>Estado</th>
+                        <th>Tipo</th>
                         <!-- <th>Contrato</th> -->
                         <!-- <th>Cotización</th> -->
                         <!-- <th class="text-left">Tipo sssssssssssssssssde Contrato</th>
@@ -46,13 +47,14 @@
                         <!-- <th class="text-center">PDF</th> -->
                         <th class="text-right">Acciones</th>
                     <tr>
-                    <tr slot-scope="{ index, row }" :class="{ anulate_color : row.state_type_id == '11' }">
+                    <tr slot-scope="{ index, row }" v-if="row.status === 'Aceptado'" :class="{ anulate_color : row.state_type_id == '11' }">
                         <td>{{ index }}</td>
-                        <td class="text-center">{{ row.date_of_issue }}</td>
-                        <td class="text-center" v-if="columns.delivery_date.visible">{{ row.delivery_date }}</td>
-                        <td>{{ row.user_name }}</td>
-                        <td>{{ row.customer_name }}<br/><small v-text="row.customer_number"></small></td>
-                        <td>
+                        <td class="text-center">{{ index }}</td>
+                        <td>{{ row.customer_name }}</td>
+                        <td>{{ row.customer_name }}</td>
+                        <td>{{ row.status }}</td>
+                        <td>{{ row.participation_type }}</td>
+                        <!-- <td>
                             <template v-if="row.state_type_id == '11'">
                                 {{row.state_type_description}}
                             </template>
@@ -61,7 +63,7 @@
                                     <el-option v-for="option in state_types" :key="option.id" :value="option.id" :label="option.description" :disabled="isDisabledState(row.state_type_id, option.id)"></el-option>
                                 </el-select>
                             </template>
-                        </td>
+                        </td> -->
 
                         <!-- <td class="text-right">
 
@@ -75,7 +77,7 @@
                                     @click.prevent="clickGenerateInvoice(row.id)" >Generar comprobante</button>
 
                             <a v-if="row.state_type_id != '11'" :href="`/${resource}/view/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-success">Visualizar</a>
-                            <a v-if="row.state_type_id != '11' && typeUser != 'client'" :href="`/${resource}/create/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-info">Editar</a>
+                            <a v-if="row.state_type_id != '11' && typeUser != 'client'" :href="`/${resource}/${row.participation_type.toLowerCase()}/create/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-info">Editar</a>
                             <!--<button v-if="row.state_type_id != '11' && typeUser != 'client'" type="button" class="btn waves-effect waves-light btn-xs btn-danger" @click.prevent="clickVoided(row.id)">Anular</button>-->
 
                             <button type="button" class="btn waves-effect waves-light btn-xs btn-info"
@@ -114,7 +116,7 @@
         components: {DataTable, ContractOptionsPdf, GenerateInvoice},
         data() {
             return {
-                resource: 'contracts',
+                resource: 'commercial',
                 recordId: null,
                 showDialogOptions: false,
                 showDialogGenerateInvoice: false,

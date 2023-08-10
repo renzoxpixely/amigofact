@@ -1503,4 +1503,34 @@ class DocumentController extends Controller
 
     }
 
+
+    public function ocUpload(Request $request)
+    {
+        try {
+            
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $temp = tempnam(sys_get_temp_dir(), 'document_invoice_oc');
+                file_put_contents($temp, file_get_contents($file));
+
+                return [
+                    'success' => true,
+                    'data' => [
+                        'filename' => $file->getClientOriginalName(),
+                        'temp_path' => $temp,
+                    ]
+                ];
+            }
+            return [
+                'success' => false,
+                'message' => __('app.actions.upload.error'),
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
 }

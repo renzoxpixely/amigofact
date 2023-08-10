@@ -216,6 +216,10 @@ if ($hostname) {
                 Route::delete('/person-hall/{id}', 'Tenant\PersonController@destroyPersonHall');
             });
             //Documents
+            Route::post('documents/oc/upload', 'Tenant\DocumentController@ocUpload');
+            Route::post('documents/upload/ocinvoice', 'Tenant\UploadFileController@uploadOcInvoice');
+            Route::post('commercial/participacion/upload/participation', 'Tenant\UploadFileController@uploadParticipation');
+            
             Route::post('documents/categories', 'Tenant\DocumentController@storeCategories');
             Route::post('documents/brands', 'Tenant\DocumentController@storeBrands');
             Route::get('documents/search/customers', 'Tenant\DocumentController@searchCustomers');

@@ -257,18 +257,89 @@
 
 
                         <div class="row mt-3">
-
-                        <div class="col-md-12"> <!-- Este div permite que el botón "Importar" esté al extremo derecho -->
-                                <button
-                                    aria-expanded="false"
-                                    class="btn btn-custom btn-sm mt-2 mr-2 dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    type="button"
-                                >
-                                    <i class="fa fa-upload"></i> Adjuntar archivo
-                                    <span class="caret"></span>
-                                </button>
+                        <div class="row">
+                            <div v-show="form.unit_type_id !='ZZ'"
+                                class="col-md-12">
+                                <h5 class="separator-title mt-0">
+                                    Listado de Archivos
+                                </h5>
                             </div>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">Nombre</th>
+                                            <th class="text-center">Archivo</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="(row, index) in form.person_halls"
+                                            :key="index">
+                                            <template v-if="row.id">
+                                                <td class="text-center">{{ row.name }}</td>
+                                            </template>
+                                            <template v-else>
+                                                <td :class="{'has-danger': errors['person_halls.'+index+'.name']}">
+													<el-input v-model="row.name"></el-input>
+													<small  v-if="errors['person_halls.'+index+'.name']"
+															class="form-control-feedback"
+															v-text="errors['person_halls.'+index+'.name'][0]"></small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <el-upload
+                                                        :headers="headers_token"
+                                                        :multiple="true"
+                                                        :action="`/documents/oc/upload`"
+                                                        :show-file-list="true"
+                                                        :file-list="fileListOC1" 
+                                                        :on-success="onSuccessOc1"
+                                                        list-type="text"
+                                                    >
+                                                        <button style="width: 160px;" type="button" class="btn btn-sm btn-primary" slot="trigger">
+                                                            ADJUNTAR ARCHIVO
+                                                        </button>
+                                                        <li v-for="file in fileListOC1" :key="file.uid">
+                                                                {{ file.filename }}
+                                                            </li>
+                                                    </el-upload>
+                                                </td>
+                                            </template>
+                                            <template v-if="row.id">
+                                                <td class="series-table-actions text-right">
+                                                    <button class="btn waves-effect waves-light btn-xs btn-danger"
+                                                            type="button"
+                                                            @click.prevent="clickDelete(row.id, index)">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </template>
+                                            <template v-else>
+                                                <td class="series-table-actions text-right">
+                                                    <button class="btn waves-effect waves-light btn-xs btn-danger"
+                                                            type="button"
+                                                            @click.prevent="clickCancel(index)">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <a class="control-label font-weight-bold text-info"
+                                href="#"
+                                @click="clickAddRow"> [ + Agregar]</a>
+                            </div>
+                        </div>
+
+
+
+
+
+
                         </div>
 
 
@@ -482,12 +553,31 @@
     import Logo from '@views/companies/logo.vue'
 	import { v4 as uuidv4 } from "uuid"
 	
+    import {mapActions, mapState} from "vuex/dist/vuex.mjs";
+    
     export default {
         props:['typeUser', 'quotationId', 'id', 'showPayments'],
         components: {ContractFormItem, PersonForm, ContractOptionsPdf, Logo, TermsCondition},
         mixins: [functions, exchangeRate],
+        created() {
+            console.log('ssssssssssssssssssssssssssssssssssssssssss');
+        console.log('typeUser:', this.typeUser);
+        console.log('quotationId:', this.quotationId);
+        console.log('id:', this.id);
+        console.log('showPayments:', this.showPayments);
+        
+        // Resto de tu código...
+    },
         data() {
             return {
+                headers: headers_token,
+                fileListOC1: [],
+                fileListOC1_path: [],
+                form: {
+                temp_path_oc: null,
+                file_name_oc: null,
+                // ...otros campos en tu formulario...
+                },
                 sellers: [],
                 halls: [],
                 contract_halls: [],
@@ -522,7 +612,8 @@
                 loading_search:false,
 				contractTypeName: null,
                 pays_transports: [],
-                periods: []
+                periods: [],
+                headers_token: headers_token
             }
         },
         async created() {
@@ -763,6 +854,8 @@
                     automatic_renew: 1,
                     status: '',
                     participation_type: 'Participacion',
+                    participation_documents: [],
+                    person_halls: []
                 }
 
                 if(this.showPayments){
@@ -826,6 +919,7 @@
 				this.form.items = Array.from(items)
 				//this.form.items.push(JSON.parse(JSON.stringify(row)));
                 this.calculateTotal();
+                console.log('sss',this.contractNewId);
             },
             clickAddItem(){
                 this.halls = _.union(this.contract_halls, this.halls)
@@ -963,6 +1057,11 @@
                     return this.$message.error('La fecha de emisión no puede ser posterior a la de entrega');
 
                 this.loading_submit = true
+
+                const temp_path_oc = this.form.temp_path_oc
+                const file_name_oc = this.form.file_name_oc
+
+                const fileListOC1 = this.fileListOC1
                 // await this.changePaymentMethodType(false)
                 await this.$http.post(`/${this.resource}`, this.form).then(response => {
                     if (response.data.success) {
@@ -971,6 +1070,8 @@
                         this.contractNewId = response.data.data.id;
 
                         // console.log(this.quotationId, this.id)
+                        console.log('contractID:', this.contractNewId); // Aquí imprimimos contractID
+                        this.saveFileOC(this.contractNewId, fileListOC1);
 
                         if(this.quotationId){
 
@@ -1012,6 +1113,84 @@
                     this.changeCustomer()
                 })
             },
-        }
+        onSuccessOc1(response, file, fileList) {
+            if (response.success) {
+                this.form.temp_path_oc = response.data.temp_path
+                this.form.file_name_oc = response.data.filename
+
+                const fileData = {
+                    filename: response.data.filename,
+                    temp_path: response.data.temp_path
+                };
+                this.fileListOC1.push(fileData); // Agregar el objeto al arreglo
+
+                console.log('valores', this.fileListOC1);
+            } else {
+                this.$message.error(response.message)
+            }
+        },           
+        saveFileOC(document_id, fileListOC1) {
+            const payload = {
+                document_id,
+                fileListOC1
+            }
+            this.$http.post('upload/participation', payload)
+        },
+        //agregando documentos y nombres  
+        clickAddRow() {
+            this.form.person_halls.push({
+                id: null,
+                name: null,
+            });
+			const index = this.form.person_halls.length -1;
+			delete this.errors['person_halls.'+index+'.name'];
+        },
+        clickCancel(index) {
+            this.form.person_halls.splice(index, 1)
+        },
+        clickDelete(id, index) {
+            this.$http.delete(`/${this.resource}/person-hall/${id}`)
+            .then(res => {
+                if (res.data.success) {
+                    this.clickCancel(index)
+                    this.$message.success('Se eliminó correctamente el registro')
+                }
+            })
+            .catch(error => {
+                if (error.response.status === 500) {
+                    this.$message.error('Error al intentar eliminar');
+                } else {
+                    console.log(error.response.data.message)
+                }
+            })
+        },  
+        clickAddRow() {
+            this.form.person_halls.push({
+                id: null,
+                name: null,
+            });
+			const index = this.form.person_halls.length -1;
+			delete this.errors['person_halls.'+index+'.name'];
+        },
+        clickCancel(index) {
+            this.form.person_halls.splice(index, 1)
+        },
+        clickDelete(id, index) {
+            this.$http.delete(`/${this.resource}/person-hall/${id}`)
+            .then(res => {
+                if (res.data.success) {
+                    this.clickCancel(index)
+                    this.$message.success('Se eliminó correctamente el registro')
+                }
+            })
+            .catch(error => {
+                if (error.response.status === 500) {
+                    this.$message.error('Error al intentar eliminar');
+                } else {
+                    console.log(error.response.data.message)
+                }
+            })
+        }     
     }
+}
 </script>
