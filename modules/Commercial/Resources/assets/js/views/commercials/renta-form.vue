@@ -73,6 +73,13 @@
     </address>
     </div>
 
+    <div v-if="form.accepted_date" class="col-sm-2">
+    <div class="form-group">             
+        <button style="width: 160px;" type="button" class="btn btn-sm btn-primary" slot="trigger">
+             DESCARGAR EXCEL
+        </button>                     
+    </div>
+</div>
 
 
     </div>          

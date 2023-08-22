@@ -72,6 +72,16 @@
     </div>
     </address>
     </div>
+        
+    <div v-if="form.accepted_date" class="col-sm-2">
+    <div class="form-group">             
+        <button style="width: 160px;" type="button" class="btn btn-sm btn-primary" slot="trigger">
+             DESCARGAR EXCEL
+        </button>                     
+    </div>
+</div>
+
+
 
 
 
@@ -251,8 +261,8 @@
                         </div>
 
 
-
-                                    <div class="row">
+<div class="row">
+                                    <div class="col-md-4">
                                         <el-upload
                                              :headers="headers_token"
                                                  :multiple="true"
@@ -268,27 +278,18 @@
                                         </el-upload>
                                     </div>
 
-                                    <div class="row">
-                                    <div class="col-md-4">
-                                        <div v-for="file in form.fileListOC1" :key="file.uid">
-                                        {{ file.document_url }}
-                                        <el-divider></el-divider>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div v-for="file in form.fileListOC1" :key="file.uid">
-                                        <button style="width: 160px;" type="button" class="btn btn-sm btn-success" @click="downloadFile(file.document_url)">Descargar</button>
-                                        <el-divider></el-divider>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div v-for="file in form.fileListOC1" :key="file.uid">
-                                        <button style="width: 160px;" type="button" class="btn btn-sm btn-danger" @click="showDeleteConfirmation(file.document_url)">Eliminar</button>
-                                        <el-divider></el-divider>
-                                        </div>
-                                    </div>
-                                    </div>
+                                    <div class="col-md-8">
 
+        <div class="row" v-for="file in form.fileListOC1" :key="file.uid">
+            <div class="col-md-8">{{ file.document_url }}</div>
+            <div class="col-md-2">
+            <button style="width: 80px;" type="button" class="btn btn-sm btn-success" @click="downloadFile(file.document_url)">Descargar</button></div>
+            <div class="col-md-2"><button style="width: 80px;" type="button" class="btn btn-sm btn-danger" @click="showDeleteConfirmation(file.document_url)">Eliminar</button></div>
+        </div>
+  
+</div>
+
+                                </div>
 
                                     <!-- Modal de confirmación -->
                                     <el-dialog :visible="showConfirmModal" :title="'Confirmación de eliminación: ' + fileToDelete">
