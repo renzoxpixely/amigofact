@@ -57,7 +57,7 @@ use Modules\Contract\Models\ContractType;
 use Modules\Item\Models\ItemLot;
 use Modules\Commercial\Models\Participation;
 use Modules\Commercial\Models\ParticipationItem;
-
+use Modules\Commercial\Models\ParticipationDocument;
 /**
  * Class ContractController
  *
@@ -93,7 +93,7 @@ class CommercialController extends Controller
 
     public function participacionCreate($id = null)
     {
-
+        
         if(auth()->user()->type == 'client') return redirect('/commercials');
 
 
@@ -276,6 +276,7 @@ public function getContratosItems()
         $number = Contract::select('id')->max('id');
         $number = $number ? ++ $number : 1;
 
+     
         return compact('customers', 'establishments','currency_types', 'discount_types', 'charge_types', 'configuration',
                         'company', 'document_type_03_filter','payment_method_types', 'payment_destinations', 'sellers', 'contract_types', 'periods', 'pays_transports', 'contract_halls', 'number');
 
@@ -324,7 +325,6 @@ public function getContratosItems()
 
     public function record($id)
     {
-        
         $record = new ParticipationResource(Participation::findOrFail($id));
         return $record;
     }

@@ -18,14 +18,22 @@ class ParticipationResource extends JsonResource
     public function toArray($request)
     {
         $contract = Participation::with(['contract_type' => function($q){
-			$q->select('id', 'name');
-		}, 'items.lots.item_lot'])->where('id', $this->id)->get()->transform(function($row, $key){
+            $q->select('id', 'name');
+        }, 'items.lots.item_lot'])->where('id', $this->id)->get()->transform(function($row, $key){
             return self::getTransformParticipation($row);
         })->first();
-
-
+    
         $contract->payments = self::getTransformPayments($contract->payments);
-
+    
+        // Obtener los documentos de participación
+        $documents = $this->documents->map(function($document) {
+            return [
+                'id' => $document->id,
+                'document_name' => $document->document_name,
+                'document_url' => $document->document_url,
+            ];
+        });
+    
         return [
             'id' => $this->id,
             'external_id' => $this->external_id,  
@@ -33,9 +41,11 @@ class ParticipationResource extends JsonResource
             'date_of_issue' => $this->date_of_issue->format('Y-m-d'), 
             'customer_id' => $this->customer_id,
             'customer_email' => $this->customer->email,
+            'fileListOC1' => $documents, // Incluir documentos de participación
             'contract' => $contract
         ];
     }
+    
 
     public static function getTransformParticipation($row){
 		$items = self::getTransformParticipationItem($row['items']);

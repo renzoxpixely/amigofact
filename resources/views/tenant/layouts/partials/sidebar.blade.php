@@ -275,17 +275,17 @@
                                 </li>    
                                 <li class="{{ ($firstLevel === 'commercial')?'nav-active':'' }}">
                                     <a class="nav-link" href="{{route('tenant.commercials.participacion.create')}}">
-                                        Nueva cotización participación
+                                        Participación
                                     </a>
                                 </li>
                                 <li class="{{ ($firstLevel === 'commercial')?'nav-active':'' }}">
                                     <a class="nav-link" href="{{route('tenant.commercials.venta.create')}}">
-                                        Nueva cotización venta
+                                        Venta
                                     </a>
                                 </li>
                                 <li class="{{ ($firstLevel === 'commercial')?'nav-active':'' }}">
                                     <a class="nav-link" href="{{route('tenant.commercials.renta.create')}}">
-                                        Nueva cotización renta
+                                        Renta
                                     </a>
                                 </li>                                                                                            
                             </ul>

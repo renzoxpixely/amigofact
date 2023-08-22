@@ -73,4 +73,63 @@ class UploadFileController extends Controller
         ];
     }
 
+
+
+            public function downloadParticipation(Request $request)
+        {
+            $document_url = $request->input('document_url');
+           
+            if (!$document_url) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Documento no encontrado.'
+                ], 404);
+            }
+
+            $filePath = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'participation' . DIRECTORY_SEPARATOR . $document_url;
+
+            if (Storage::exists($filePath)) {
+                return Storage::download($filePath);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Archivo no encontrado en el servidor.'
+                ], 404);
+            }
+        }
+
+
+        public function deleteFile(Request $request)
+        {
+            $fileToDelete = $request->input('document_url');
+            $directory = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'participation' . DIRECTORY_SEPARATOR;
+        
+            $document = ParticipationDocument::where('document_url', $fileToDelete)->first();
+        
+            if ($document) {
+                if (Storage::exists($directory . $fileToDelete)) {
+                    Storage::delete($directory . $fileToDelete);
+                    
+                    // Elimina el registro de la base de datos
+                    $document->delete();
+                    
+                    return [
+                        'success' => true,
+                        'message' => 'Archivo eliminado exitosamente.'
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Archivo no encontrado en el almacenamiento.'
+                    ];
+                }
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Registro de documento no encontrado en la base de datos.'
+                ];
+            }
+        }
+
+        
 }

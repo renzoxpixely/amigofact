@@ -14,6 +14,7 @@ use App\Models\Tenant\Quotation;
 use App\Models\Tenant\PaymentMethodType;
 use App\Models\Tenant\ModelTenant;
 use App\Traits\SellerIdTrait;
+use Modules\Commercial\Models\ParticipationDocument;
 
 class Participation extends ModelTenant
 {

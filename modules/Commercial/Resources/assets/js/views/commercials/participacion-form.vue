@@ -56,19 +56,19 @@
     </div>
     </div>
     <div class="container">
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
-    <!-- <div class="font-weight-bold">-</div> -->
-    <div class="font-weight-bold">Registrado</div>
-    </div>
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
-    <div class="font-weight-bold">En negociación</div>
-    </div>
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
-    <div class="font-weight-bold">Aceptado</div>
-    </div>
+        <div v-if="form.registered_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
+            <!-- <div class="font-weight-bold">-</div> -->
+            <div class="font-weight-bold">Registrado</div>
+        </div>
+        <div v-if="form.negotiation_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
+            <div class="font-weight-bold">En negociación</div>
+        </div>
+        <div v-if="form.accepted_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
+            <div class="font-weight-bold">Aceptado</div>
+        </div>
     </div>
     </address>
     </div>
@@ -252,12 +252,55 @@
 
 
 
+                                    <div class="row">
+                                        <el-upload
+                                             :headers="headers_token"
+                                                 :multiple="true"
+                                                 :action="`/documents/oc/upload`"
+                                                 :show-file-list="true"
+                                                 :file-list="form.fileListOC1" 
+                                                 :on-success="onSuccessOc1"
+                                                  list-type="text"
+                                                     >
+                                          <button style="width: 160px;" type="button" class="btn btn-sm btn-primary" slot="trigger">
+                                                ADJUNTAR ARCHIVO
+                                          </button>
+                                        </el-upload>
+                                    </div>
+
+                                    <div class="row">
+                                    <div class="col-md-4">
+                                        <div v-for="file in form.fileListOC1" :key="file.uid">
+                                        {{ file.document_url }}
+                                        <el-divider></el-divider>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div v-for="file in form.fileListOC1" :key="file.uid">
+                                        <button style="width: 160px;" type="button" class="btn btn-sm btn-success" @click="downloadFile(file.document_url)">Descargar</button>
+                                        <el-divider></el-divider>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div v-for="file in form.fileListOC1" :key="file.uid">
+                                        <button style="width: 160px;" type="button" class="btn btn-sm btn-danger" @click="showDeleteConfirmation(file.document_url)">Eliminar</button>
+                                        <el-divider></el-divider>
+                                        </div>
+                                    </div>
+                                    </div>
 
 
-
+                                    <!-- Modal de confirmación -->
+                                    <el-dialog :visible="showConfirmModal" :title="'Confirmación de eliminación: ' + fileToDelete">
+                                    <p>¿Estás seguro de que quieres eliminar este archivo?</p>
+                                    <span slot="footer" class="dialog-footer">
+                                        <el-button @click="cancelDelete">Cancelar</el-button>
+                                        <el-button type="danger" @click="deleteConfirmed(fileToDelete)">Confirmar</el-button>
+                                    </span>
+                                    </el-dialog>
 
                         <div class="row mt-3">
-                        <div class="row">
+                        <!-- <div class="row">
                             <div v-show="form.unit_type_id !='ZZ'"
                                 class="col-md-12">
                                 <h5 class="separator-title mt-0">
@@ -274,17 +317,17 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr v-for="(row, index) in form.person_halls"
+                                        <tr v-for="(row, index) in form.participation_documents"
                                             :key="index">
                                             <template v-if="row.id">
                                                 <td class="text-center">{{ row.name }}</td>
                                             </template>
                                             <template v-else>
-                                                <td :class="{'has-danger': errors['person_halls.'+index+'.name']}">
+                                                <td :class="{'has-danger': errors['participation_documents.'+index+'.name']}">
 													<el-input v-model="row.name"></el-input>
-													<small  v-if="errors['person_halls.'+index+'.name']"
+													<small  v-if="errors['participation_documents.'+index+'.name']"
 															class="form-control-feedback"
-															v-text="errors['person_halls.'+index+'.name'][0]"></small>
+															v-text="errors['participation_documents.'+index+'.name'][0]"></small>
                                                 </td>
                                                 <td class="text-center">
                                                     <el-upload
@@ -292,7 +335,7 @@
                                                         :multiple="true"
                                                         :action="`/documents/oc/upload`"
                                                         :show-file-list="true"
-                                                        :file-list="fileListOC1" 
+                                                        :file-list="form.fileListOC1" 
                                                         :on-success="onSuccessOc1"
                                                         list-type="text"
                                                     >
@@ -333,7 +376,7 @@
                                 href="#"
                                 @click="clickAddRow"> [ + Agregar]</a>
                             </div>
-                        </div>
+                        </div> -->
 
 
 
@@ -571,6 +614,11 @@
         data() {
             return {
                 headers: headers_token,
+            //     form: {
+            //     fileListOC1: [],
+            // },
+            showConfirmModal: false,
+            fileToDelete: null,
                 fileListOC1: [],
                 fileListOC1_path: [],
                 form: {
@@ -622,12 +670,14 @@
             await this.$http.get(`/${this.resource}/tables`)
                 .then(response => {
                     const data = response.data;
+                    console.log(response.data)
                     this.currency_types = data.currency_types
                     this.establishments = data.establishments
                     this.all_customers = data.customers
                     this.discount_types = data.discount_types
                     this.charges_types = data.charges_types
                     this.company = data.company
+                    console.log('first',this.company)
                     this.form.currency_type_id = (this.currency_types.length > 0)?this.currency_types[0].id:null
                     this.form.establishment_id = (this.establishments.length > 0)?this.establishments[0].id:null
                     this.payment_method_types = data.payment_method_types
@@ -660,6 +710,63 @@
             }
         },
         methods: {
+
+
+    async downloadFile(documentUrl) {
+      try {
+        const response = await axios.post('/download-participation', {
+          document_url: documentUrl
+        }, {
+          responseType: 'blob' // Important for downloading files
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Extract the original filename from the URL
+        const filename = documentUrl.substring(documentUrl.lastIndexOf('/') + 1);
+
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        console.error('Error downloading file:', error);
+      }
+    },    
+
+    showDeleteConfirmation(documentUrl) {
+            this.showConfirmModal = true;
+            this.fileToDelete = documentUrl;
+        },
+        deleteConfirmed(documentUrl) {
+            this.deleteFile(documentUrl);
+            this.closeConfirmModal();
+        },
+        cancelDelete() {
+            this.closeConfirmModal();
+        },
+        closeConfirmModal() {
+            this.showConfirmModal = false;
+            this.fileToDelete = null;
+        },
+        async deleteFile(documentUrl) {
+            try {
+                const response = await axios.post('/delete-participation', {
+                    document_url: documentUrl,
+                });
+
+                if (response.data.success) {
+                    // Actualizar la lista de archivos en el frontend si es necesario
+                    // Por ejemplo, si usas Vue.js para mostrar los archivos en la lista
+                    const updatedFileList = this.form.fileListOC1.filter(file => file.document_url !== documentUrl);
+                    this.form.fileListOC1 = updatedFileList;
+                }
+            } catch (error) {
+                console.error('Error deleting file:', error);
+            }
+        },
+
             selectDestinationSale() {
 
                 if(this.configuration.destination_sale && this.payment_destinations.length > 0 && this.showPayments) {
@@ -718,20 +825,30 @@
                     this.form.negotiation_date = this.quotation.negotiation_date
                     this.form.accepted_date = this.quotation.accepted_date
                     this.form.participation_type = this.quotation.participation_type
+
+                    this.form.fileListOC1 = this.quotation.fileListOC1
                 }
 
-            },
-            async isUpdate(){
+                console.log('this.form:', this.form);
+                console.log('this.form.fileListOC1:', this.form.fileListOC1);
+                console.log('this.quotation.fileListOC1:', this.quotation.fileListOC1);
+                console.log('this.quotation:', this.quotation);
+                    },
+                    async isUpdate(){
 
-                if(this.id) {
-                    await this.$http.get(`/${this.resource}/record/${this.id}`)
-                        .then(response => {
-                            this.form = response.data.data.contract;
-                            this.reloadDataCustomers(this.form.customer_id)
-                            this.changeContractType()
-                            this.changeCustomer()
-                        })
+                        if (this.id) {
+                try {
+                    const response = await this.$http.get(`/${this.resource}/record/${this.id}`);
+                    const contractData = response.data.data; // Obtén los datos completos de la respuesta
+                    this.form = contractData.contract;
+                    this.form.fileListOC1 = contractData.fileListOC1; // Asigna fileListOC1 directamente
+                    this.reloadDataCustomers(this.form.customer_id);
+                    this.changeContractType();
+                    this.changeCustomer();
+                } catch (error) {
+                    console.error("Error fetching contract data:", error);
                 }
+            }
 
             },
             changeTermsCondition(){
@@ -855,7 +972,8 @@
                     status: '',
                     participation_type: 'Participacion',
                     participation_documents: [],
-                    person_halls: []
+                    participation_documents: [],
+                    fileListOC1: [],
                 }
 
                 if(this.showPayments){
@@ -1138,15 +1256,15 @@
         },
         //agregando documentos y nombres  
         clickAddRow() {
-            this.form.person_halls.push({
+            this.form.participation_documents.push({
                 id: null,
                 name: null,
             });
-			const index = this.form.person_halls.length -1;
-			delete this.errors['person_halls.'+index+'.name'];
+			const index = this.form.participation_documents.length -1;
+			delete this.errors['participation_documents.'+index+'.name'];
         },
         clickCancel(index) {
-            this.form.person_halls.splice(index, 1)
+            this.form.participation_documents.splice(index, 1)
         },
         clickDelete(id, index) {
             this.$http.delete(`/${this.resource}/person-hall/${id}`)
@@ -1165,15 +1283,15 @@
             })
         },  
         clickAddRow() {
-            this.form.person_halls.push({
+            this.form.participation_documents.push({
                 id: null,
                 name: null,
             });
-			const index = this.form.person_halls.length -1;
-			delete this.errors['person_halls.'+index+'.name'];
+			const index = this.form.participation_documents.length -1;
+			delete this.errors['participation_documents.'+index+'.name'];
         },
         clickCancel(index) {
-            this.form.person_halls.splice(index, 1)
+            this.form.participation_documents.splice(index, 1)
         },
         clickDelete(id, index) {
             this.$http.delete(`/${this.resource}/person-hall/${id}`)

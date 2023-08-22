@@ -14,12 +14,12 @@ use App\Models\Tenant\Quotation;
 use App\Models\Tenant\PaymentMethodType;
 use App\Models\Tenant\ModelTenant;
 use App\Traits\SellerIdTrait;
-
+use Modules\Commercial\Models\ParticipationDocument;
 class Participation extends ModelTenant
 {
     use SellerIdTrait;
     
-    protected $with = ['user', 'soap_type', 'state_type', 'currency_type', 'items', 'payments'];
+    protected $with = ['user', 'soap_type', 'state_type', 'currency_type', 'items', 'payments' ,'documents'];
 
     protected $fillable = [
         'id',
@@ -105,6 +105,13 @@ class Participation extends ModelTenant
         'participation_percentage' => 'float',
         'automatic_renew' => 'bool'
     ];
+
+
+    public function documents()
+    {
+        return $this->hasMany(ParticipationDocument::class);
+    }
+
 
     function tipocontrato()
     {

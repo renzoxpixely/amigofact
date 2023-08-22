@@ -56,19 +56,19 @@
     </div>
     </div>
     <div class="container">
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
-    <!-- <div class="font-weight-bold">-</div> -->
-    <div class="font-weight-bold">Registrado</div>
-    </div>
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
-    <div class="font-weight-bold">En negociación</div>
-    </div>
-    <div class="d-flex justify-content-between mt-1">
-    <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
-    <div class="font-weight-bold">Aceptado</div>
-    </div>
+        <div v-if="form.registered_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
+            <!-- <div class="font-weight-bold">-</div> -->
+            <div class="font-weight-bold">Registrado</div>
+        </div>
+        <div v-if="form.negotiation_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
+            <div class="font-weight-bold">En negociación</div>
+        </div>
+        <div v-if="form.accepted_date !== null"  class="d-flex justify-content-between mt-1">
+            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
+            <div class="font-weight-bold">Aceptado</div>
+        </div>
     </div>
     </address>
     </div>

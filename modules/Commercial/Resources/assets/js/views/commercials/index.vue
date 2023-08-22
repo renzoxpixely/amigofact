@@ -76,7 +76,7 @@
                             <button v-if="row.btn_generate && row.document_id == null" type="button" class="btn waves-effect waves-light btn-xs btn-tumblr"
                                     @click.prevent="clickGenerateInvoice(row.id)" >Generar comprobante</button>
 
-                            <a v-if="row.state_type_id != '11'" :href="`/${resource}/view/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-success">Visualizar</a>
+                            <!-- <a v-if="row.state_type_id != '11'" :href="`/${resource}/view/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-success">Visualizar</a> -->
                             <a v-if="row.state_type_id != '11' && typeUser != 'client'" :href="`/${resource}/${row.participation_type.toLowerCase()}/create/${row.id}`" type="button" class="btn waves-effect waves-light btn-xs btn-info">Editar</a>
                             <!--<button v-if="row.state_type_id != '11' && typeUser != 'client'" type="button" class="btn waves-effect waves-light btn-xs btn-danger" @click.prevent="clickVoided(row.id)">Anular</button>-->
 

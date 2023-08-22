@@ -219,7 +219,10 @@ if ($hostname) {
             Route::post('documents/oc/upload', 'Tenant\DocumentController@ocUpload');
             Route::post('documents/upload/ocinvoice', 'Tenant\UploadFileController@uploadOcInvoice');
             Route::post('commercial/participacion/upload/participation', 'Tenant\UploadFileController@uploadParticipation');
-            
+            Route::post('commercial/participacion/create/upload/participation', 'Tenant\UploadFileController@uploadParticipation');
+            Route::post('/download-participation', 'Tenant\UploadFileController@downloadParticipation');
+            Route::post('/delete-participation', 'Tenant\UploadFileController@deleteFile');
+
             Route::post('documents/categories', 'Tenant\DocumentController@storeCategories');
             Route::post('documents/brands', 'Tenant\DocumentController@storeBrands');
             Route::get('documents/search/customers', 'Tenant\DocumentController@searchCustomers');

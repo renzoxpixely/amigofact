@@ -45,21 +45,21 @@
                                         <small class="form-control-feedback" v-if="errors.pays_transport" v-text="errors.pays_transport[0]"></small>    
                                     </div>
                                 </div>
-                                    <div class="container">
-                                            <div class="d-flex justify-content-between mt-1">
-                                            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
-                                            <!-- <div class="font-weight-bold">-</div> -->
-                                            <div class="font-weight-bold">Registrado</div>
-                                        </div>
-                                            <div class="d-flex justify-content-between mt-1">
-                                            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
-                                            <div class="font-weight-bold">En negociación</div>
-                                        </div>
-                                            <div class="d-flex justify-content-between mt-1">
-                                            <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
-                                            <div class="font-weight-bold">Aceptado</div>
-                                        </div>
-                                    </div>  
+                                <div class="container">
+                                    <div v-if="form.registered_date !== null"  class="d-flex justify-content-between mt-1">
+                                        <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.registered_date }}</div>
+                                        <!-- <div class="font-weight-bold">-</div> -->
+                                        <div class="font-weight-bold">Registrado</div>
+                                    </div>
+                                    <div v-if="form.negotiation_date !== null"  class="d-flex justify-content-between mt-1">
+                                        <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.negotiation_date }}</div>
+                                        <div class="font-weight-bold">En negociación</div>
+                                    </div>
+                                    <div v-if="form.accepted_date !== null"  class="d-flex justify-content-between mt-1">
+                                        <div class="font-weight-bold"><i class="fa fa-calendar"></i>{{ form.accepted_date }}</div>
+                                        <div class="font-weight-bold">Aceptado</div>
+                                    </div>
+                                </div>
                             </address>
                         </div>
                     </div>
@@ -112,25 +112,34 @@
                                     </el-select>
                                     <small class="form-control-feedback" v-if="errors.pays_transport" v-text="errors.pays_transport[0]"></small>
                                 </div>
-                            </div> -->
-                                <div class="col-lg-4">
-                                    <div class="row">
-                                    <div class="form-group col-lg-6" :class="{ 'has-danger': errors.customer_participation }">
-                                        <label class="control-label">Descuento Global</label>
-                                        <div class="d-flex">
-                                            <el-radio v-model="form.global_discount_type" label="porcentual">Porcentual</el-radio>
-                                            <el-radio v-model="form.global_discount_type" label="monto_fijo">Monto fijo</el-radio>
-                                        </div>
-                                    </div>
-                                    <div  class="form-group col-lg-6" :class="{ 'has-danger': errors.customer_participation }">
-                                        <label class="control-label">Monto</label>
-                                        <el-input v-model="form.amount" :clearable="true" v-if="selectedType === 'porcentual'" placeholder="%"></el-input>
-                                        <el-input v-model="form.amount" :clearable="true" v-else placeholder="Monto"></el-input>
-                                        <small class="form-control-feedback" v-if="errors.customer_participation" v-text="errors.customer_participation[0]"></small>
-                                    </div>
-                                    </div>
-                                </div>
+                            </div> -->                              
                         </div>  
+
+                        <div class="row mt-1">
+                            <div class="col-lg-4">
+                                <div class="form-group" :class="{ 'has-danger': errors.customer_participation }">
+                                <label class="control-label">Descuento Global</label>
+                                <div class="d-flex">
+                                    <el-radio v-model="form.global_discount_type" label="porcentual">Porcentual</el-radio>
+                                    <el-radio v-model="form.global_discount_type" label="monto_fijo">Monto fijo</el-radio>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-flex align-items-center">
+                                <div class="form-group" :class="{ 'has-danger': errors.customer_participation }">
+                                <label class="control-label">Monto descuento</label>
+                                <el-input v-model="form.amount" :clearable="true" v-if="selectedType === 'porcentual'" placeholder="%"></el-input>
+                                <el-input v-model="form.amount" :clearable="true" v-else placeholder="Monto"></el-input>
+                                <small class="form-control-feedback" v-if="errors.customer_participation" v-text="errors.customer_participation[0]"></small>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-flex align-items-center">
+                                <div class="form-group" :class="{ 'has-danger': errors.customer_participation }">
+                                <button type="button" class="btn waves-effect waves-light btn-primary" @click.prevent="descontar()">Aplicar descuento</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row mt-1">
                             <!--<div class="col-lg-2">
                                 <div class="form-group" :class="{'has-danger': errors.date_of_issue}">
@@ -831,19 +840,29 @@
 					this.contractTypeName = null
                     this.validHall = false
 				}
+            },    
+            descontar() {
+            // Llama al método para recalcular el total
+            this.calculateTotal();
+
+            // Resta el valor de form.amount del total
+            this.form.total -= parseFloat(this.form.amount);
+
+            // Redondea el nuevo total
+            this.form.total = _.round(this.form.total, 2);
             },
             calculateTotal() {
-    let total_discount = 0;
-    let total_charge = 0;
-    let total_exportation = 0;
-    let total_taxed = 0;
-    let total_exonerated = 0;
-    let total_unaffected = 0;
-    let total_free = 0;
-    let total_igv = 0;
-    let total_value = 0;
-    let total = 0;
-    let amount = 0;
+                let total_discount = 0;
+                let total_charge = 0;
+                let total_exportation = 0;
+                let total_taxed = 0;
+                let total_exonerated = 0;
+                let total_unaffected = 0;
+                let total_free = 0;
+                let total_igv = 0;
+                let total_value = 0;
+                let total = 0;
+                let amount = 0;
 
     this.form.items.forEach((row) => {
         total_discount += parseFloat(row.total_discount);
@@ -875,9 +894,9 @@
     });
 
     // Realizar la resta antes de redondear.
-    this.form.total_taxed = total_taxed - this.form.amount;
-    console.log('total taxed', this.form.total_taxed  )
-    console.log('amount',this.form.amount )
+    // this.form.total_taxed = total_taxed - this.form.amount;
+    // console.log('total taxed', this.form.total_taxed  )
+    // console.log('amount',this.form.amount )
     // Luego, realizar los redondeos.
     this.form.total_exportation = _.round(total_exportation, 2);
     this.form.total_taxed = _.round(this.form.total_taxed, 2); // Redondear la nueva cantidad.
