@@ -74,12 +74,12 @@
     </div>
         
     <div v-if="form.accepted_date" class="col-sm-2">
-    <div class="form-group">             
-        <button style="width: 160px;" type="button" class="btn btn-sm btn-primary" slot="trigger">
-             DESCARGAR EXCEL
-        </button>                     
-    </div>
-</div>
+        <div class="form-group">
+            <button style="width: 200px;" class="btn btn-sm btn-primary" @click="downloadExcel">
+                MACHINE REQUEST EXCEL
+            </button>
+            </div>
+        </div>
 
 
 
@@ -1309,7 +1309,11 @@
                     console.log(error.response.data.message)
                 }
             })
-        }     
+        }, 
+        downloadExcel() {
+        const downloadUrl = `/${this.id}/exportation`; // Reemplaza con la ruta correcta
+        window.location.href = downloadUrl;
+        }    
     }
 }
 </script>

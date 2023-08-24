@@ -295,22 +295,6 @@
 
 
                         <div class="row mt-3">
-
-                        <div class="col-md-12"> <!-- Este div permite que el botón "Importar" esté al extremo derecho -->
-                                <button
-                                    aria-expanded="false"
-                                    class="btn btn-custom btn-sm mt-2 mr-2 dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    type="button"
-                                >
-                                    <i class="fa fa-upload"></i> Adjuntar archivo
-                                    <span class="caret"></span>
-                                </button>
-                            </div>
-                        </div>
-
-
-                        <div class="row mt-3">
                         <div class="col-md-12">
                             <hr>
                             <p class="font-weight-bold">Bank - INTERBANK</p>

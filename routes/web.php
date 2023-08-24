@@ -222,6 +222,7 @@ if ($hostname) {
             Route::post('commercial/participacion/create/upload/participation', 'Tenant\UploadFileController@uploadParticipation');
             Route::post('/download-participation', 'Tenant\UploadFileController@downloadParticipation');
             Route::post('/delete-participation', 'Tenant\UploadFileController@deleteFile');
+            Route::get('/{id}/exportation', 'Tenant\CommercialController@export')->name('tenant.persons.export');
 
             Route::post('documents/categories', 'Tenant\DocumentController@storeCategories');
             Route::post('documents/brands', 'Tenant\DocumentController@storeBrands');
